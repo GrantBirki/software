@@ -1,0 +1,13 @@
+baseURL = "https://software.birki.io/"
+languageCode = "en-us"
+title = "software"
+theme = "dario"
+
+[params]
+
+  author = "Grant Birkinbine"
+  description = "Software Project Design and Deployment"
+  footer = "birki.io"
+
+  [params.homeInfoParams]
+    Description = "Software Project Design and Deployment"
