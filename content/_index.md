@@ -30,8 +30,6 @@ Some common language that is used throughout this document:
 
 ### 1. Scripts to Rule Them All
 
-Projects should adhear to the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This pattern is a set of common scripts that are used across all repositories through an organization. This pattern is used to ensure that all projects have a consistent set of scripts that are used to perform common tasks such as testing, building, and deploying.
+Projects should follow the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This ensures a consistent set of scripts for tasks like testing, building, and deploying any project.
 
-Using this pattern enables developers to immediately be productive in a new repository as they can run a single command to get a working development environment.
-
-CI builds also greatly benefit from this pattern as they use the same scripts that developers use to build and test the project.
+This pattern allows developers to quickly get a working development environment with a single command and ensures CI builds use the same scripts for building and testing. Developers don't need to remember the specific commands for each project as the scripts are consistent across all projects. No matter the project, language, or framework, calling `script/bootstrap` should always install the project's dependencies.
