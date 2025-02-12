@@ -118,6 +118,20 @@ body {
     color 0.2s ease;
 }
 
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+    display: inline-flex;
+    color: var(--text-color);
+    margin-inline-start: 8px;
+    font-weight: 500;
+    user-select: none;
+    opacity: 0.5;
+}
+
 a {
   color: inherit;
   text-decoration: underline;

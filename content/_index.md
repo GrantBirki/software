@@ -8,6 +8,8 @@ summary: A high level software design manifesto on how to effectively build prod
 
 date: 2025-02-11T00:00:00-00:00 # date of creation
 
+# disableAnchoredHeadings: false
+
 draft: false
 
 ogTitle: Grant Birkinbine
