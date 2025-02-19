@@ -54,3 +54,6 @@ Effective communication is the foundation for all other pillars of software engi
 ### 1. Scripts to Rule Them All
 
 Projects should follow the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This ensures a consistent set of scripts for tasks like testing, building, and deploying any project. Developers don't need to remember the specific commands for each project as the scripts are consistent across all projects.
+
+### 2. Vendor Dependencies
+
