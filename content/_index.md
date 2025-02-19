@@ -21,17 +21,12 @@ ogImage: /default.png # comment this out to force an SVG generation and usage th
 
 This document is a high level software design manifesto on how to effectively build production software, deploy it, and maintain it. It is a living document, and an opinionated one. It is strongly inspired by the core engineering principles of [GitHub](https://github.blog/engineering/engineering-principles/).
 
-Some common language that is used throughout this document:
-
-- **Project**: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
-- **Production**: The *live* environment of an application or service.
-
 There are four key principles that this document will discuss:
 
-1. **Communication**
-2. **Project Architecture**
-3. **Deployment**
-4. **Maintenance**
+1. [**Communication**](#communication)
+2. [**Project Architecture**]((#project-architecture))
+3. [**Deployment**](#deployment)
+4. [**Maintenance**](#maintenance)
 
 ## Communication
 
@@ -53,4 +48,13 @@ Effective communication is the foundation for all other pillars of software engi
 
 ### 1. Scripts to Rule Them All
 
-Projects should follow the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This ensures a consistent set of scripts for tasks like testing, building, and deploying any project. Developers don't need to remember the specific commands for each project as the scripts are consistent across all projects.
+Projects should follow the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This ensures a consistent set of scripts for tasks like testing, building, and deploying any project[^1]. Developers don't need to remember the specific commands for each project as the scripts are consistent across all projects.
+
+### 2. Vendor Dependencies
+
+## Deployment
+
+## Maintenance
+
+[^1]: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
+[^2]: The *live* environment of an application or service.
