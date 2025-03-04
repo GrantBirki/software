@@ -1,10 +1,10 @@
 ---
 title: "Tarball Deploy"
 author: "Grant Birkinbine"
-description: "todo"
+description: "About Tarball-based deployments"
 
 # The summary is for search engines
-summary: todo
+summary: Tarball Deployments - A simple deployment alternative to Git based deployments when containers might not be an option.
 
 date: 2025-03-03T00:00:00-00:00 # date of creation
 
