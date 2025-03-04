@@ -27,14 +27,23 @@ In almost all cases, its better to just use containers. However, there are some 
 2. **Efficient Transfer and Deployment** – Tarballs are highly compressed and can be quickly transferred over the network and extracted in place.
 3. **Non-Containerized Environments** – If you're not using containers but still want a reproducible and controlled deployment method, tarballs offer a lightweight alternative.
 4. **Zero-Downtime Deployments** – By extracting the tarball to a new directory and updating a symlink, you can achieve zero-downtime deployments with minimal configuration.
+5. **Host-Based Services** – Many systems today are containerized, but some are still services running directly on hosts doing Git based deployments. Using tarball-based deployments can be a good alternative to Git based deployments if you are deploying to a host-based service.
+6. **Simple Services** – Very simple services that don't need to be containerized can benefit from tarball-based deployments. For example, a very simple web server that serves static files could be deployed using tarball-based deployments, and a lot of the time, this is how it is done.
 
-Certain services/applications that runs directly on hosts (or are just super simple) can benefit from tarball-based deployments.
+> *A tarball, sometimes its all you need.*
 
 ### When NOT to Use Tarball-Based Deployments
 
 - **When Using Containers or Kubernetes** – If you're deploying to Kubernetes, it's better to use container images rather than managing tarball extraction manually.
 - **Large, Complex Applications with OS Dependencies** – If your application requires system-wide dependencies (e.g., databases, libraries, or OS-specific packages), it is almost always better to just package the application in a container image. This ensures that the application is deployed in a consistent and reproducible environment.
 - **Dependency Isolation** – If you need to isolate dependencies between different applications or services, containers are a better choice.
+- **Security** – If you need to ensure that the deployment environment is secure and compliant, containers offer better isolation and control over the runtime environment.
+
+## How to Implement Tarball-Based Deployments
+
+This section will go into a high-level overview of how to implement tarball-based deployments for deploying a simple application to a single server.
+
+TODO
 
 ## What about Git Deployments?
 
