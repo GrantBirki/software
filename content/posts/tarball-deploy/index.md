@@ -19,6 +19,8 @@ ogImage: /posts/tarball-deploy/og.png # comment this out to force an SVG generat
 
 Tarball-based deployments involve packaging your application and its dependencies into a compressed `.tar.gz` archive and extracting it on the target system. This approach works well in various scenarios, especially when you need a simple, reliable, and versioned deployment method.
 
+Tarball deployments are largely considered a legacy deployment method, but they are still used today and many systems still rely on them.
+
 ### When Tarball-Based Deployments Work Well
 
 In almost all cases, its better to just use containers. However, there are some cases where tarball-based deployments still work well. Most cases involve replacing Git based deployments with tarball based deployments. Here are some examples:
@@ -29,6 +31,7 @@ In almost all cases, its better to just use containers. However, there are some 
 4. **Zero-Downtime Deployments** – By extracting the tarball to a new directory and updating a symlink, you can achieve zero-downtime deployments with minimal configuration.
 5. **Host-Based Services** – Many systems today are containerized, but some are still services running directly on hosts doing Git based deployments. Using tarball-based deployments can be a good alternative to Git based deployments if you are deploying to a host-based service.
 6. **Simple Services** – Very simple services that don't need to be containerized can benefit from tarball-based deployments. For example, a very simple web server that serves static files could be deployed using tarball-based deployments, and a lot of the time, this is how it is done.
+7. **Pure Configuration Changes** - If you are deploying a change consisting of only configuration files (ex: json, yaml, etc), then a tarball based deployment can also work well. Especially if you pair this with symlinks, you can quickly switch between different configurations.
 
 > *A tarball, sometimes its all you need.*
 
