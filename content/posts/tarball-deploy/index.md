@@ -43,7 +43,19 @@ In almost all cases, its better to just use containers. However, there are some 
 
 This section will go into a high-level overview of how to implement tarball-based deployments for deploying a simple application to a single server.
 
-TODO
+The following steps should all take place in a CI/CD pipeline and this takes place during a **deployment** stage.
+
+1. **Build the Tarball** – Compile the application and package it into a tarball in a clean environment.
+2. **Transfer the Tarball** – Transfer the tarball to the target server(s) using a secure and reliable method. SSH, SCP, are your classic options.
+3. **Extract the Tarball** - Once the tarball exists on the server, the most common method is to have the final step of the deployment process be to connect to the server (ex: via SSH) and extract the tarball to the correct directory.
+4. **Restart the Application** - After the tarball is extracted, the application needs to be restarted to pick up the new changes. Now you are done!
+
+### Best Practices for Tarball-Based Deployments
+
+- **Pack Commit Metadata** - Since tarballs should not contain the `.git` directory, it will not contain Git data by default. Therefore, you should ensure you add some metadata into the tarball. For example, adding the [BUILD_SHA or BUILD_BRANCH](https://github.com/GrantBirki/ruby-template/blob/ef2e68f2aeeeb1284879b8df5fa7b5545affeed2/script/build-deploy-tarball#L20-L22) could be useful here.
+- **File Naming Convention** - Use a consistent naming convention for your tarballs to make it easy to identify the platform, version, and architecture. For example: `linux-aarch64-bookworm-sha123abc.tar.gz`
+- **Cleanup Old Tarballs** - To avoid running out of disk space, you should periodically clean up old tarballs on the server.
+- **Checksums and Signatures** - To ensure the integrity of the tarball, you should generate a checksum and/or signature for the tarball and verify it on the server before extracting it.
 
 ## What about Git Deployments?
 
