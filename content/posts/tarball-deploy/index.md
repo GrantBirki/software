@@ -52,7 +52,7 @@ The following steps should all take place in a CI/CD pipeline and this takes pla
 
 ### Best Practices for Tarball-Based Deployments
 
-- **Pack Commit Metadata** - Since tarballs should not contain the `.git` directory, it will not contain Git data by default. Therefore, you should ensure you add some metadata into the tarball. For example, adding the [BUILD_SHA or BUILD_BRANCH](https://github.com/GrantBirki/ruby-template/blob/ef2e68f2aeeeb1284879b8df5fa7b5545affeed2/script/build-deploy-tarball#L20-L22) could be useful here.
+- **Pack Commit Metadata** - Since tarballs should not contain the `.git` directory, it will not contain Git data by default. Therefore, you should ensure you add some metadata into the tarball. For example, adding the Git [SHA or branch](https://github.com/GrantBirki/ruby-template/blob/ef2e68f2aeeeb1284879b8df5fa7b5545affeed2/script/build-deploy-tarball#L20-L22) could be useful here.
 - **File Naming Convention** - Use a consistent naming convention for your tarballs to make it easy to identify the platform, version, and architecture. For example: `linux-aarch64-bookworm-sha123abc.tar.gz`
 - **Cleanup Old Tarballs** - To avoid running out of disk space, you should periodically clean up old tarballs on the server.
 - **Checksums and Signatures** - To ensure the integrity of the tarball, you should generate a checksum and/or signature for the tarball and verify it on the server before extracting it.
