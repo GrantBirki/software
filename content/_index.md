@@ -62,10 +62,12 @@ Here are some examples of *shim*-based language version managers: [rbenv](https:
 
 ### 3. Vendor Dependencies
 
+### 4. Build Systems are Production Systems
+
 ## Deployment
 
 ## Maintenance
 
 [^1]: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
-[^2]: The *live* environment of an application or service.
+[^2]: The *live* environment of an application or service. A production environment is where the final product is delviered to the end user. This could be a website, mobile app, api, etc.
 [^3]: Language version managers use a directory of shims at the front of your `PATH` - Read more about it [here](https://github.com/nodenv/nodenv/blob/8948584145f2ce1853967337c91f2e09996aa1c3/README.md?plain=1#L64-L104).
