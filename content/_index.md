@@ -68,7 +68,7 @@ Fostering a culture of working in the open leads to a more inclusive team and on
 
 ### 1. Scripts to Rule Them All
 
-Projects should follow the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This ensures a consistent set of scripts for tasks like testing, building, and deploying any project[^1]. Developers don't need to remember the specific commands for each project as the scripts are consistent across all projects.
+Projects should follow the [**scripts to rule them all**](https://github.com/github/scripts-to-rule-them-all) pattern. This ensures a consistent set of scripts for tasks like testing, building, and deploying any project[^1]. Developers don't need to remember the specific commands for each project as the scripts are consistent across all projects. Using this pattern allows for Language Version Managers to work quite effectively, which is the next principle.
 
 ### 2. Language Version Managers
 
