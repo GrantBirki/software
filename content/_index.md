@@ -40,6 +40,14 @@ Asynchronous mediums necessitate a distributed workflow and those mediums genera
 
 ### 2. Everything should have a URL
 
+URLs are the foundation of the internet. Having a permalink to a converation, decision, pull request, snippet of code, or any other artifact used to build software is a key part of effective communication. Having URLs that are durable is the lifeblood of a distributed team that builds software. It allows teams to build and collaborate asynchronously.
+
+Ensure that the tools you adopt for communication have durable URLs. For example, Slack threads are not durable, but a link to a GitHub issue is.
+
+> "*While it’s certainly hard to make the case that absolutely every decision should be rigorously memorialized, it’s even harder to make the case that your organization would be better off if they weren’t.*" - Ben Balter
+
+Ben Balter's blog post [Why URLs](https://ben.balter.com/2015/11/12/why-urls/) goes into more detail on this principle.
+
 ### 3. Work in the Open
 
 ### 4. Write it Down
