@@ -34,6 +34,10 @@ Effective communication is the foundation for all other pillars of software engi
 
 ### 1. Be Asynchronous First
 
+Working asynchronously[^4] is a key part of any software engineering team. It allows for more flexibility in work schedules, for teams to be more inclusive of different time zones, and for people to have more time to work uninterrupted. Interrupt work is a major productivity killer due to context switching. Additionally, it allows for more thoughtful and well-considered responses to questions and issues.
+
+Asynchronous mediums necessitate a distributed workflow and those mediums generally lead to durable artifacts which leads to our next principle.
+
 ### 2. Everything should have a URL
 
 ### 3. Work in the Open
@@ -71,3 +75,4 @@ Here are some examples of *shim*-based language version managers: [rbenv](https:
 [^1]: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
 [^2]: The *live* environment of an application or service. A production environment is where the final product is delviered to the end user. This could be a website, mobile app, api, etc.
 [^3]: Language version managers use a directory of shims at the front of your `PATH` - Read more about it [here](https://github.com/nodenv/nodenv/blob/8948584145f2ce1853967337c91f2e09996aa1c3/README.md?plain=1#L64-L104).
+[^4]: Asynchronous communication is any kind of communication where there is a delay between the information being provided by the sender and the time when the recipient accepts the information and acts on it.
