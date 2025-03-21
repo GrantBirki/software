@@ -24,7 +24,7 @@ This document is a high level software design manifesto on how to effectively bu
 There are four key principles that this document will discuss:
 
 1. [**Communication**](#communication)
-2. [**Project Architecture**]((#project-architecture))
+2. [**Project Architecture**](#project-architecture)
 3. [**Deployment**](#deployment)
 4. [**Maintenance**](#maintenance)
 
