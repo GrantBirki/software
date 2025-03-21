@@ -84,6 +84,8 @@ Here are some examples of *shim*-based language version managers: [rbenv](https:
 
 ### 4. Build Systems are Production Systems
 
+### 5. Testing
+
 ## Deployment
 
 ## Maintenance
