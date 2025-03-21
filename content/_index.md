@@ -50,11 +50,19 @@ Ben Balter's blog post [Why URLs](https://ben.balter.com/2015/11/12/why-urls/) g
 
 ### 3. Work in the Open
 
+Ensuring that the work you do is open and *visible* to the rest of the team is crucial. In the context of software engineering, this doesn't mean that you need everything to be public in the sense of *open source* but rather that other members of your organization can discover your work. This means using public Slack channels, pushing your code frequently, and opening pull requests early in the development process to get feedback.
+
+Working in private channels, excluding team members from conversations, or working in a silo can lead to duplicated work, or worse, work that is not in line with the rest of the team's goals.
+
+Not working in the open prevents others from learning about your work, and prevents you from learning about theirs.
+
+Fostering a culture of working in the open leads to a more inclusive team and one that supports transparency and collaboration.
+
 ### 4. Write it Down
 
 ### 5. Collaborate
 
-### 6. Communicate Openly, Honestly, and Authentically
+### 6. Communicate Honestly, and Authentically
 
 ## Project Architecture
 
