@@ -60,7 +60,22 @@ Fostering a culture of working in the open leads to a more inclusive team and on
 
 ### 4. Write it Down
 
+When used in combination with the [**Everything should have a URL**](#2-everything-should-have-a-url) and [**Work in the Open**](#3-work-in-the-open) principles, writing things down becomes incredibly powerful. Writing things down allows for a durable artifact to be created that can be referenced at any time. This helps to reduce the amount of cognitive load that is required to remember every detail and instead only focus on the most important ones. If you need to remember something, write it down and then you can forget about it because you know where to find it via durable URLs.
+
 ### 5. Collaborate
+
+When writing software, it is important to remember that you are not working in a vacuum. You will either have team members directly working on the same project as you, other teams that will interact with your project, consumers of your project, open source contributors, or all of the above. Collaboration allows for others to bring their unique perspectives to the table and will ultimately lead to a better product.
+
+When you collaborate, you are opening the door to:
+
+- **Feedback**: This can be in the form of code reviews, design reviews, or any other form of feedback.
+- **Questions**: Questions often have the side effect of leading to better documentation.
+- **Learning**: You will learn from the people you collaborate with, and they will learn from you.
+- **Preventing Silos**: Collaboration helps to prevent silos from forming. Silos are dangerous because they can lead to duplicated work or complete gaps in knowledge that makes it challenging for others to contribute/maintain/troubleshoot to your work.
+
+When collaboration is used in combination with the [**Write it Down**](#4-write-it-down), [**Work in the Open**](#3-work-in-the-open), [**Everything should have a URL**](#2-everything-should-have-a-url), and [**Be Asynchronous First**](#1-be-asynchronous-first) principles, it becomes incredibly powerful. It allows for a team to work asynchronously, for that work to be durable/discoverable, and for all members of the team to be able to contribute to the conversation.
+
+A North Star example would be linking every pull request you are working on in a public Slack channel for your team. This allows for other members on the team to see your work, optionally review it, and provide feedback. It also allows for members to contribute in an asynchronous manner that gaps time zones. A bonus of this example is that it also creates a timeline of the work you have done as you go so others can follow along and be get caught up on the work that is in flight and serve as a changelog. By doing this, you are working in the open, writing it down, and allowing for collaboration to happen - all at the same time.
 
 ### 6. Communicate Honestly, and Authentically
 
