@@ -103,6 +103,23 @@ Here are some examples of *shim*-based language version managers: [rbenv](https:
 
 ### 3. Vendor Dependencies
 
+Vendoring dependencies is an often overlooked aspect of software development. Many software languages today have package managers that allow for native dependency vendoring.
+
+The term *Dependency Vendoring* refers to the practice of including a copy of a given dependency in your project's repository. Ruby is truly a shining example of this by being able to configure `bundler` (the Ruby package manager) to vendor all dependencies locally within a project. Here is an example of vendoring a gem (rack) within a project: [`vendor/cache/rack-3.1.12.gem`](https://github.com/GrantBirki/ruby-template/blob/main/vendor/cache/rack-3.1.12.gem). When a developer goes to configure their environment, their package manager will install the dependencies from the vendored directory. Additionally, when a CI/CD pipeline runs, it will also install the dependencies from the vendored directory. This leads to an extremely stable and reproducible build process that is not dependent on the availability of the dependency registry except for the first time the dependency is vendored or when the dependency is updated.
+
+The reason that Ruby is such a great example here is due to the way that Gems are structured as a single file. This makes it easy to vendor the dependency and commit it to the repository. Updating a Ruby Gem that has been vendored typically involves updating a single file (the Gem). Doing the same in GoLang might result in updating a directory of files (could be thousands of files).
+
+Vendoring Dependencies should be adopted as a standard practice in **all** projects. Vendoring dependencies has many benefits that lead to a more stable and secure codebase:
+
+- **Reproducibility**: When you vendor dependencies, you are ensuring that the code you are running is the same code that was running when the dependency was last updated.
+- **Security**: Vendoring hardens your application against supply chain attacks. The version that is committed to your repository is the version that will be used. If a dependency is compromised, projects that don't vendor their dependencies are at risk of being compromised as well since they pull in the dependency at build time.
+- **Availability**: If a dependency is removed from the registry, or the registry goes down, you can still build your project because the dependency is vendored. Additionally, you can even build your project without an internet connection.
+- **Performance**: When you vendor dependencies, you are caching them locally. This means that you don't have to download the dependency every time you build your project. This can lead to a significant performance improvement, especially in CI/CD environments.
+
+Without vendoring, it makes it difficult (or in some cases impossible without tooling) to ensure that the application running locally on your machine is the same as the one that gets build in CI/CD and deployed to production.
+
+The North Star example of this principle would be to pass what I call the "**airplane test**"[^5]. If you were to be on an airplane with no internet connection, you should be able to: bootstrap a project, write some code, run unit tests, and build (or run) the project[^6]. If you can do all of that, then you have passed the airplane test and are correctly vendoring your dependencies.
+
 ### 4. Build Systems are Production Systems
 
 ### 5. Testing
@@ -115,3 +132,5 @@ Here are some examples of *shim*-based language version managers: [rbenv](https:
 [^2]: The *live* environment of an application or service. A production environment is where the final product is delviered to the end user. This could be a website, mobile app, api, etc.
 [^3]: Language version managers use a directory of shims at the front of your `PATH` - Read more about it [here](https://github.com/nodenv/nodenv/blob/8948584145f2ce1853967337c91f2e09996aa1c3/README.md?plain=1#L64-L104).
 [^4]: Asynchronous communication is any kind of communication where there is a delay between the information being provided by the sender and the time when the recipient accepts the information and acts on it.
+[^5]: The airplane test is a test that I made up to put a projects dependency vendoring to the test. It is a test that I believe all projects should be able to pass. If a project cannot pass the airplane test, then it is almost certainly at risk of having build failures due to dependency resolution issues. Whether those issues are due to network availability, a package registry going down, or the package being remove (or compromised) from the registry, the airplane test will help to ensure that your project shielded from these issues. Go ahead and try it out at home! Turn off your network connection and see if you can write code, run tests, and build your project without the pesky internet.
+[^6]: In the context of vendoring dependencies, building a project could mean any of the following: compiling a binary, build a library (like a Ruby Gem), running a service or application, etc. In some cases, building a project is synonymous with running a project.
