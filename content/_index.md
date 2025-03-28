@@ -118,7 +118,7 @@ Vendoring Dependencies should be adopted as a standard practice in **all** proje
 
 Without vendoring, it makes it difficult (or in some cases impossible without tooling) to ensure that the application running locally on your machine is the same as the one that gets build in CI/CD and deployed to production.
 
-The North Star example of this principle would be to pass what I call the "**airplane test**"[^5]. If you were to be on an airplane with no internet connection, you should be able to: bootstrap a project, write some code, run unit tests, and build (or run) the project[^6]. If you can do all of that, then you have passed the airplane test and are correctly vendoring your dependencies.
+The North Star of this principle would be to pass what I call the "**airplane test**"[^5]. If you were to be on an airplane with no internet connection, you should be able to: bootstrap a project, write some code, run unit tests, and build (or run) the project[^6]. If you can do all of that, then you have passed the airplane test and are correctly vendoring your dependencies.
 
 ### 4. Build Systems are Production Systems
 
