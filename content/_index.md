@@ -77,7 +77,13 @@ When collaboration is used in combination with the [**Write it Down**](#4-write-
 
 A North Star example would be linking every pull request you are working on in a public Slack channel for your team. This allows for other members on the team to see your work, optionally review it, and provide feedback. It also allows for members to contribute in an asynchronous manner that gaps time zones. A bonus of this example is that it also creates a timeline of the work you have done as you go so others can follow along and be get caught up on the work that is in flight and serve as a changelog. By doing this, you are working in the open, writing it down, and allowing for collaboration to happen - all at the same time.
 
-### 6. Communicate Honestly, and Authentically
+### 6. Communicate Honestly and Authentically
+
+Say what you mean, in a respectful way, and listen to understand each other ([ref](https://github.com/github/how-engineering-communicates/blob/bf86e6b5e397e0122280b4881652248a10aebb80/how-github-engineering-communicates.md?plain=1#L64)). Building software is a team sport and it is important to remember that we are humans working with other humans. If you think something is a bad idea, say so, but do it in a respectful way. Foster a culture of psychological safety where everyone feels comfortable sharing their ideas and opinions.
+
+Also remember that it is okay to say "I don't know" or "I need help". No one knows everything and it is important to ask for help when you need it. This is a sign of strength, not weakness.
+
+Emoji and animated GIFs are the facial expressions and body language of online writing - use them.
 
 ## Project Architecture
 
