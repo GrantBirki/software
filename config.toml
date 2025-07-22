@@ -1,13 +1,16 @@
 baseURL = "https://software.birki.io/"
 languageCode = "en-us"
 title = "software"
-theme = "dario"
+
+[module]
+  [[module.imports]]
+    path = "github.com/GrantBirki/dario"
+    noVendor = false
+    version = "main"
 
 [params]
-
   author = "Grant Birkinbine"
   description = "Software Project Design and Deployment"
   footer = "birki.io"
-
   [params.homeInfoParams]
     Description = "Software Project Design and Deployment"
