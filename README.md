@@ -16,6 +16,14 @@ hugo server -D
 
 Now you can visit [`localhost:1313`](http://localhost:1313/) to see the site.
 
+## Theme Updates
+
+To pull in the latest updates from the Dario theme, run:
+
+```bash
+script/update
+```
+
 ### Open Graph Images
 
 If you wish to render open graph images, you can use the following commands:
