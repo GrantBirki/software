@@ -12,6 +12,8 @@ date: 2025-02-11T00:00:00-00:00 # date of creation
 
 draft: false
 
+homePageIsPost: true
+
 ogTitle: Grant Birkinbine
 ogDescription: "Software: How to build it"
 ogImage: /default.png # comment this out to force an SVG generation and usage then you can run `script/images` to make the SVG become a PNG and use it here
