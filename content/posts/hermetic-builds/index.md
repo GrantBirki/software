@@ -6,7 +6,7 @@ description: "About hermetic builds and dependency vendoring"
 # The summary is for search engines
 summary: Hermetic Builds - A battle tested way to ensure your builds are reproducible and air-gapped by vendoring dependencies.
 
-date: 2025-03-03T00:00:00-00:00 # date of creation
+date: 2025-07-31T00:00:00-00:00 # date of creation
 
 draft: false
 
