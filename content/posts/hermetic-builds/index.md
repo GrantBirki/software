@@ -166,10 +166,36 @@ Hermetic builds don't prevent security updates – they make them explicit and r
 3. **Document your vendoring process**: Make it easy for new team members to understand how to update dependencies
 4. **Test dependency updates thoroughly**: Since updates are explicit, you can afford to test them more rigorously
 
+## Hermetic Builds and SLSA Level 3
+
+The [Supply Chain Levels for Software Artifacts (SLSA)](https://slsa.dev/) framework provides a set of security guidelines for securing software supply chains. SLSA Level 3 represents a significant milestone in supply chain security, and hermetic builds are a **critical component** for achieving this level.
+
+### What SLSA Level 3 Requires
+
+SLSA Level 3 builds upon the requirements of lower levels (SLSA L1/L2) and adds several key guarantees:
+
+- **Hosted Build Platform**: Builds must run on a hosted platform that generates and signs provenance
+- **Build Isolation**: Build runs cannot influence each other (preventing cross-contamination between builds)
+- **Signed Provenance**: The build process must produce cryptographically signed provenance that can be verified as authentic
+
+### How Hermetic Builds Enable SLSA Level 3
+
+Hermetic builds directly support two of the three core SLSA Level 3 requirements:
+
+1. **Build Isolation**: By vendoring all dependencies and eliminating external network calls during the build process, hermetic builds naturally prevent builds from influencing each other. Each build operates in a completely self-contained environment.
+
+2. **Provenance Integrity**: Since hermetic builds use only explicitly vendored dependencies, the provenance can accurately capture the complete set of inputs used in the build. There are no hidden or implicit dependencies that could affect the build outcome.
+
+When combined with a SLSA Level 3 compliant build platform (like GitHub Actions with the appropriate generators), hermetic builds provide the foundation for achieving the highest level of supply chain security currently defined by the SLSA framework.
+
+### The Path Forward
+
+If your organization is pursuing SLSA Level 3 compliance, implementing hermetic builds should be one of your first priorities. They provide the build isolation and reproducibility guarantees that SLSA Level 3 requires, while also delivering the practical benefits discussed throughout this post.
+
 ## The Bottom Line
 
 Hermetic builds represent a fundamental shift in how we think about software reliability. They transform builds from fragile, network-dependent processes into predictable, reliable operations. While the security benefits are significant, the real value lies in the dramatically improved developer experience and system reliability.
 
-In a world where software systems are increasingly complex and interconnected, hermetic builds provide a foundation of stability that teams can build upon with confidence. They're not just a nice-to-have feature – they're a prerequisite for professional software development.
+In a world where software systems are increasingly complex and interconnected, hermetic builds provide a foundation of stability that teams can build upon with confidence. They're not just a nice-to-have feature – they're a prerequisite for professional software development and a critical component for achieving advanced supply chain security standards like SLSA Level 3.
 
 > *Hermetic builds: Because your software should build the same way every time, everywhere.*
