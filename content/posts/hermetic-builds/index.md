@@ -91,6 +91,8 @@ Every dependency update becomes an explicit, reviewable change in your version c
 
 ### Ruby: The Gold Standard
 
+> I'm biased, but Ruby makes dependency vendoring such a joy.
+
 Ruby's Bundler makes hermetic builds straightforward:
 
 ```bash
