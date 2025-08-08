@@ -129,7 +129,7 @@ go build -mod=vendor
 
 > You might end up with a pull request containing +/- 100,000 lines of code, but this is the price of reliability.
 
-Here is an example of a Go project that uses vendoring effectively: [github/gh-combine](https://github.com/github/gh-combine/tree/e2ef6bfa8cb006e0134b5e39d8a08b8b5033e81f).
+Here is an example of a Go project that uses vendoring effectively: [github/gh-combine](https://github.com/github/gh-combine/tree/21e396afffff67cd2c387b9ecc85c061d658b968).
 
 ## The Airplane Test: Your Hermetic Build Validation
 
