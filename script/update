@@ -1,7 +1,29 @@
-#!/bin/bash
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+module_path="github.com/GrantBirki/dario"
+module_ref="main"
+vendor_root="_vendor/github.com/GrantBirki"
+versioned_vendor_dir="$vendor_root/dario@$module_ref"
+canonical_vendor_dir="$vendor_root/dario"
 
 hugo mod clean
+hugo mod get -u "$module_path@$module_ref"
 hugo mod get -u
 hugo mod tidy
+rm -rf _vendor
 hugo mod vendor
+
+if [[ -d "$versioned_vendor_dir" ]]; then
+  rm -rf "$canonical_vendor_dir"
+  mv "$versioned_vendor_dir" "$canonical_vendor_dir"
+fi
+
+if [[ -f _vendor/modules.txt ]]; then
+  modules_tmp="$(mktemp)"
+  sed "s|^# $module_path@$module_ref |# $module_path |" _vendor/modules.txt >"$modules_tmp"
+  mv "$modules_tmp" _vendor/modules.txt
+fi
+
 hugo mod verify
