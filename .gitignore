@@ -22,5 +22,4 @@ tmp/
 resources/
 public/
 
-node_modules/
 hugo.direct.sum
