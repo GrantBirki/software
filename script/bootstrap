@@ -1,3 +1,8 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-npm install
+set -euo pipefail
+
+command -v hugo >/dev/null || {
+  echo "hugo is required. Install the version from .hugo-version before developing locally." >&2
+  exit 1
+}

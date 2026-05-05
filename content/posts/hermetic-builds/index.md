@@ -12,7 +12,7 @@ draft: false
 
 ogTitle: Grant Birkinbine
 ogDescription: "Hermetic Builds"
-ogImage: /posts/hermetic-builds/og.png # comment this out to force an SVG generation and usage then you can run `script/images` to make the SVG become a PNG and use it here
+ogImage: /posts/hermetic-builds/og.png
 ---
 
 ## What are Hermetic Builds?

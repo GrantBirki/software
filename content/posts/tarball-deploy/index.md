@@ -12,7 +12,7 @@ draft: false
 
 ogTitle: Grant Birkinbine
 ogDescription: "Tarball Deploy"
-ogImage: /posts/tarball-deploy/og.png # comment this out to force an SVG generation and usage then you can run `script/images` to make the SVG become a PNG and use it here
+ogImage: /posts/tarball-deploy/og.png
 ---
 
 ## Why Use Tarball-Based Deployment?
