@@ -41,7 +41,7 @@ This dramatically reduces the scope of investigation and makes debugging more pr
 
 ### 2. Freezing Your Dependencies in Time
 
-Hermetic builds create a **time capsule** for your dependencies. When you vendor dependencies, you're preserving the exact state of the software ecosystem at the time of your last dependency update. This has profound implications:
+Hermetic builds create a **time capsule** for your dependencies. When you vendor dependencies, you're preserving the exact state of the software ecosystem at the time of your last dependency update. This has profound benefits:
 
 - **Historical Builds**: You can checkout any commit from your repository's history and build it successfully, even if half the dependencies no longer exist on the internet.
 - **Regression Analysis**: When debugging issues, you can bisect through your Git history knowing that each commit represents a buildable state.
@@ -60,7 +60,7 @@ The performance benefits of hermetic builds compound over time:
 
 Consider a typical CI/CD pipeline that spends 2-3 minutes downloading dependencies on every run. Over hundreds of builds per day across a team, this time adds up to hours of wasted compute and developer waiting time.
 
-### 4. Eliminating "Works on My Machine" Syndrome
+### 4. Eliminating the "Works on My Machine" Syndrome
 
 Non-hermetic builds are susceptible to subtle environmental differences:
 
@@ -75,9 +75,9 @@ Hermetic builds eliminate these variables. If the build works in one environment
 
 While not the only reason to adopt hermetic builds, supply chain security benefits are substantial:
 
-### Protection Against Dependency Confusion Attacks
+### Protection Against Dependency Substitution Attacks
 
-When you vendor dependencies, you're protected against attackers who might upload malicious packages with similar names to popular libraries. Your build process won't accidentally pull in a compromised dependency because it's using the specific versions you've explicitly vendored.
+Vendoring dependencies reduces exposure to dependency confusion, package squatting, and typosquatting attacks. Because the build uses the exact dependency source and versions committed to the repository, it does not dynamically resolve packages from a registry where an attacker-controlled package could be selected instead.
 
 ### Immutable Dependency Snapshots
 
@@ -113,7 +113,54 @@ BUNDLE_NO_INSTALL: "true"
 
 Ruby gems are single compressed files, making them ideal for vendoring without repository bloat.
 
-Here is an example of a Ruby project that uses vendoring effectively: [GrantBirki/ruby-template](https://github.com/GrantBirki/ruby-template/tree/7200c62db6c178fd972c54f522d1cc4d6d61ea65)
+Here is an example of a Ruby project that uses vendoring effectively: [GrantBirki/ruby-template](https://github.com/GrantBirki/ruby-template/tree/55e24c1d5bf9f75843590b02507f47e4b3e84033)
+
+### Python: Hashed, Platform-Specific Wheels
+
+Python projects can build hermetically by exporting a hash-locked requirements file, committing wheels for each supported platform, and forcing the installer to use only that cache:
+
+```bash
+# Lock and export exact dependencies with hashes
+uv lock
+uv export --frozen --format requirements.txt \
+  --output-file vendor/requirements.lock.txt
+
+# Match these values to your pinned Python version
+PYTHON_SERIES=3.13
+PYTHON_ABI=cp313
+
+# Download Apple Silicon wheels for macOS development machines
+python -m pip download --require-hashes --only-binary=:all: \
+  --platform macosx_11_0_arm64 \
+  --python-version "$PYTHON_SERIES" \
+  --implementation cp \
+  --abi "$PYTHON_ABI" \
+  --dest vendor/cache/python/macos-arm64 \
+  -r vendor/requirements.lock.txt
+
+# Download x86_64 wheels for Linux CI runners
+python -m pip download --require-hashes --only-binary=:all: \
+  --platform manylinux2014_x86_64 \
+  --python-version "$PYTHON_SERIES" \
+  --implementation cp \
+  --abi "$PYTHON_ABI" \
+  --dest vendor/cache/python/linux-x86_64 \
+  -r vendor/requirements.lock.txt
+
+# Install offline on Apple Silicon development machines
+python -m pip install --require-hashes --no-index \
+  --find-links vendor/cache/python/macos-arm64 \
+  -r vendor/requirements.lock.txt
+
+# Install offline in Linux CI
+python -m pip install --require-hashes --no-index \
+  --find-links vendor/cache/python/linux-x86_64 \
+  -r vendor/requirements.lock.txt
+```
+
+Wheels can be specific to the Python version, ABI, operating system, and architecture, so vendor a cache for each environment you support. Bootstrap tools such as `uv` must also be available without network access.
+
+Here is an example of a Python project that vendors both its application dependencies and bootstrap tooling: [GrantBirki/dns](https://github.com/GrantBirki/dns/tree/b607836ab05879ec3333e24236afb2bca8bd3e69).
 
 ### Go: Built-in Vendoring Support
 
@@ -129,7 +176,7 @@ go build -mod=vendor
 
 > You might end up with a pull request containing +/- 100,000 lines of code, but this is the price of reliability.
 
-Here is an example of a Go project that uses vendoring effectively: [github/gh-combine](https://github.com/github/gh-combine/tree/21e396afffff67cd2c387b9ecc85c061d658b968).
+Here is an example of a Go project that uses vendoring effectively: [GrantBirki/go-template](https://github.com/GrantBirki/go-template/tree/cdf5f7d3e204cd088d638723c732689aa3c6211c).
 
 ## The Airplane Test: Your Hermetic Build Validation
 
