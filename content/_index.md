@@ -174,6 +174,40 @@ Acceptance tests are the next level. Projects with an executable, service, or ot
 
 ## Deployment
 
+### 1. Deploy Before Merge
+
+The safest time to discover that a change does not work in production is before it becomes part of `main`. Merge-then-deploy reverses this order: it records a change as accepted and only then discovers whether it can run. That makes every deployment a gamble and turns `main` into a collection of assumptions instead of a known-good branch.
+
+Branch deployment should be the strong default. Open a pull request, pass the selected CI checks, explicitly authorize a production deployment, validate the running change, and merge only after it works. The order matters. Testing and review establish that the change should work; the deployment proves that it does work in the environment that matters. The merge then records a state that has already been proven.
+
+This model also gives `main` a useful and durable meaning: it is the known-good, deployable branch. A broken candidate can be fixed or abandoned without first removing it from `main`, and a rollback has an obvious target. The [Branch Deploy Model](https://blog.birki.io/posts/branch-deploy/) describes this workflow in more detail, while GitHub's article on [enabling branch deployments through IssueOps](https://github.blog/engineering/engineering-principles/enabling-branch-deployments-through-issueops-with-github-actions/) shows how the same idea can work across a large engineering organization.
+
+Merging should not automatically trigger a redundant deployment when production already contains the exact tree that was validated. If the merge result matches the deployed change, there is nothing new to prove. Reconcile from `main` only when the merge commit, an intervening deployment, or another repository change means that production differs from the newly merged tree. The upstream [merge-commit strategy](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/merge-commit-strategy.md) provides a practical model for making that decision without discarding the safety of deploy-before-merge.
+
+### 2. Deploy Immutable References
+
+People deploy pull request branches; machines should deploy exact commits. A branch gives humans the context they need: the review, discussion, CI results, permissions, and deployment history. The actual deployment target must be the full commit SHA selected from that pull request. This separates a useful human workflow from the immutable identity required by a reliable system.
+
+Every deployment should retain that source SHA. When the build produces a container, package, binary, or other artifact, the deployment should also use and retain its immutable digest or checksum. Branches, tags, versions, and releases are valuable labels, but they are not sufficient identities. They can move, be recreated, or resolve differently over time. An exact SHA and artifact digest make it possible to answer a basic question long after the event: what, precisely, is running?
+
+This is not an argument for allowing arbitrary commit SHAs to bypass the normal workflow. The SHA should still be selected through a pull request, checked by CI, constrained by permissions, and deployed only after explicit authorization. The [commit-SHA deployment guidance](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/deploying-commit-SHAs.md) preserves the pull request as the trusted context while ensuring that the selected candidate cannot change between approval and deployment.
+
+Deployment control code needs its own trust boundary. Workflows, scripts, and helpers that decide how production changes should come from a trusted revision of the default branch. Only the candidate application or infrastructure should come from the pull request's exact SHA. Otherwise, a pull request can change both the thing being deployed and the mechanism that grants credentials and deploys it. The pinned [trusted-checkout guidance](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/trusted-checkouts.md) demonstrates how to keep those responsibilities separate.
+
+### 3. Make Deployments Safe and Reversible
+
+A production deployment should require two things: the selected CI checks must pass, and an authorized operator must explicitly request the change. Passing tests alone should not silently mutate production, and deployment authority should not bypass the project's required checks. Pull request approval requirements can remain project-specific; different teams and risk levels justify different review policies.
+
+When a deployment system can produce a meaningful noop, plan, preview, or dry run, show it before applying the change. This is especially valuable for infrastructure and other destructive operations because it gives the operator a chance to catch an unexpected mutation. It is not a universal requirement. A misleading preview or one that merely repeats the input adds ceremony without adding safety.
+
+Deployments that compete for the same environment or shared mutable state must be serialized. Two individually safe changes can become unsafe when they race, overwrite each other, or apply from different assumptions about the current state. Independent and additive releases do not need a global lock simply for consistency's sake. Concurrency should follow the actual collision boundary.
+
+The result of every deployment should remain visible and attributable. A maintainer should be able to find the exact source and artifact identity, the target environment, whether the deployment succeeded, and the output needed to understand the result. The specific metadata format matters less than keeping a durable connection between the reviewed change and the production event.
+
+Rollback must be a normal and practiced deployment operation. When a candidate fails, redeploy the stable state of `main`, resolved to its exact source SHA and artifact identity. Do not wait for a revert pull request to merge before restoring service. The repository can record the corrective change afterward; production recovery should use the known-good state that already exists.
+
+These principles do not require any particular command interface or CI provider. They require a deployment system that preserves context, deploys immutable inputs, protects its control path, proves changes in production, and can recover quickly. [`github/branch-deploy`](https://github.com/github/branch-deploy) is one reference implementation of this model.
+
 ## Maintenance
 
 [^1]: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
