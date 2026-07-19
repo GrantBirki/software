@@ -2,28 +2,54 @@
 
 set -euo pipefail
 
-module_path="github.com/GrantBirki/dario"
-module_ref="main"
-vendor_root="_vendor/github.com/GrantBirki"
-versioned_vendor_dir="$vendor_root/dario@$module_ref"
-canonical_vendor_dir="$vendor_root/dario"
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
 
-hugo mod clean
-hugo mod get -u "$module_path@$module_ref"
-hugo mod get -u
+module_path="github.com/GrantBirki/dario"
+
+if [[ "$#" -ne 1 ]]; then
+  echo "usage: script/update <40-character-dario-sha>" >&2
+  exit 1
+fi
+
+if [[ ! "$1" =~ ^[0-9a-f]{40}$ ]]; then
+  echo "usage: script/update <40-character-dario-sha>" >&2
+  exit 1
+fi
+
+command -v hugo >/dev/null || {
+  echo "hugo is required" >&2
+  exit 1
+}
+
+command -v go >/dev/null || {
+  echo "go is required" >&2
+  exit 1
+}
+
+module_sha="$1"
+short_sha="${module_sha:0:12}"
+
+export GOTOOLCHAIN=local
+
+hugo mod get "$module_path@$module_sha"
 hugo mod tidy
+
+module_version="$(awk -v module="$module_path" '
+  $1 == "require" && $2 == module { print $3 }
+  $1 == module { print $2 }
+' go.mod)"
+
+if [[ -z "$module_version" || "$module_version" != *-"$short_sha" ]]; then
+  echo "go.mod does not pin $module_path to $module_sha" >&2
+  exit 1
+fi
+
 rm -rf _vendor
 hugo mod vendor
-
-if [[ -d "$versioned_vendor_dir" ]]; then
-  rm -rf "$canonical_vendor_dir"
-  mv "$versioned_vendor_dir" "$canonical_vendor_dir"
-fi
-
-if [[ -f _vendor/modules.txt ]]; then
-  modules_tmp="$(mktemp)"
-  sed "s|^# $module_path@$module_ref |# $module_path |" _vendor/modules.txt >"$modules_tmp"
-  mv "$modules_tmp" _vendor/modules.txt
-fi
-
 hugo mod verify
+
+if ! grep -Fqx "# $module_path $module_version" _vendor/modules.txt; then
+  echo "_vendor/modules.txt does not match the Dario version in go.mod" >&2
+  exit 1
+fi

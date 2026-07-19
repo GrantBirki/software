@@ -18,11 +18,13 @@ Now you can visit [`localhost:1313`](http://localhost:1313/) to see the site.
 
 ## Theme Updates
 
-To pull in the latest updates from the Dario theme, run:
+To update the Dario theme to a reviewed commit, pass its full 40-character commit SHA:
 
 ```bash
-script/update
+script/update <40-character-dario-sha>
 ```
+
+The update is recorded as an immutable Go pseudo-version in `go.mod` and committed in `_vendor` for offline builds.
 
 ### Open Graph Images
 
