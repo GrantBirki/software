@@ -17,7 +17,7 @@ ogImage: /posts/hermetic-builds/og.png
 
 ## What are Hermetic Builds?
 
-A hermetic build is a build process that is self-contained, deterministic, and completely air-gapped from the internet. It produces the same output given the same inputs, regardless of the environment in which it runs. The term "hermetic" comes from the concept of a hermetically sealed container – nothing gets in or out except what is explicitly defined.
+A hermetic build is a build process that is self-contained, deterministic, and completely air-gapped from the internet. It produces the same output given the same inputs, regardless of the environment in which it runs. The term "hermetic" comes from the concept of a hermetically sealed container – nothing gets in or out.
 
 In the context of software development, hermetic builds ensure that your application can be built consistently across different environments without relying on external resources during the build process. This is primarily achieved through **dependency vendoring** – the practice of including all necessary dependencies directly within your project repository.
 
