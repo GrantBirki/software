@@ -160,6 +160,18 @@ A green test suite proves that the tests passed. It does not prove that the revi
 
 ### 6. Testing
 
+An exceptional test suite should aim for 100% line, branch, and function coverage. This is the North Star. It forces a project to account for every path through its code instead of quietly accepting unknown behavior.
+
+Coverage does not prove correctness; it only proves that code executed. Tests still need meaningful assertions across successful paths, failures, edge cases, and the branches where safety decisions are made. Every behavior change should include tests, and every bug fix should add a regression test that fails without the fix.
+
+Strong tests are the lifeblood of a healthy open source project (and private projects too). They give maintainers a reliable way to evaluate a contribution without reconstructing the entire system during review. They also give contributors the confidence to make a change and know whether it broke unrelated behavior. Without that shared safety net, contributions become slower, riskier, and less likely.
+
+Every project should expose one consistent test command. `script/test` should be the entrypoint that developers and CI both call. Unit tests should be fast, focused, deterministic, and isolated from the network. A suite that is slow or unreliable teaches people not to run it.
+
+Languages with excellent built-in testing tools make this much easier. Go's `testing` package is an excellent example: a project can write tests, benchmarks, and executable examples without adding another testing dependency.
+
+Acceptance tests are the next level. Projects with an executable, service, or other consumer-facing boundary should exercise the product through the same interface a consumer uses. Run these tests through `script/acceptance`, both locally and in CI. Keep the environment controlled with mock APIs, emulators, or disposable containerized services instead of live external systems. A GitHub integration can use a mock GitHub API, an LDAP-backed service can use a disposable LDAP container, and an Action can be invoked through `uses: ./`. These tests prove that the parts work together while remaining repeatable and independent of someone else's availability or data.
+
 ## Deployment
 
 ## Maintenance
