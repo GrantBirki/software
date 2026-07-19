@@ -64,7 +64,7 @@ jobs:
     steps:
       # checkout trusted tooling from the default branch commit for this issue_comment event
       - name: checkout trusted tooling
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6
         with:
           ref: ${{ github.sha }}
           path: tooling
@@ -115,7 +115,7 @@ jobs:
 
       # checkout the selected site commit without credentials
       - name: checkout selected site
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # pin@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6
         with:
           ref: ${{ needs.trigger.outputs.sha }}
           path: site
