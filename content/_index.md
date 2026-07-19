@@ -210,6 +210,32 @@ These principles do not require any particular command interface or CI provider.
 
 ## Maintenance
 
+A maintainable project makes ownership, runtime behavior, and future change easy to understand. Maintenance is the steady work of preserving those properties from the very start and long after release with ease.
+
+### 1. Make Ownership Durable
+
+Every repository should have a discoverable purpose and owner. Prefer ownership by a team because teams survive role changes and departures in a way that ownership by one person cannot. The repository should explain why that team owns it, while a mechanism such as [`CODEOWNERS`](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners) makes the mapping visible. Ownership means responsibility for reviews, releases, dependency and security updates, and compatibility decisions.
+
+### 2. Logs Must Explain What Happened
+
+Services and applications should log enough information to explain what they did and why they failed. Record meaningful operations, state changes, outcomes, and errors with the context needed to investigate them. Use clear severity levels and request or operation identifiers when they help connect events. The format matters less than usefulness, but logs must never expose secrets or sensitive data. After an incident, improve the logs, tests, or error handling that made the failure difficult to understand.
+
+### 3. Maintain Continuously
+
+Immutable pins make updates explicit; they do not make updates optional. Prefer small, regular, reviewed updates over large upgrade projects where years of drift must be understood at once.
+
+### 4. Keep `main` Green
+
+`main` is the baseline used to judge every future change. Broken CI, flaky tests, ignored warnings, and broken maintenance workflows are defects because they make that baseline unreliable. Fix them quickly or remove checks that no longer provide a useful signal. A project that normalizes red builds eventually loses the ability to tell whether a new change is safe.
+
+### 5. Prefer the Simplest Complete Fix
+
+Follow the KISS principle during bug fixes and ongoing maintenance. The best change usually fixes the root cause, adds regression coverage, and stops. Avoid unrelated refactoring, speculative abstractions, and clever solutions that expand the system without improving the fix. Simple means leaving behind the smallest understandable design that completely solves the problem, not merely producing the smallest diff.
+
+### 6. Delete What You No Longer Need
+
+Code that no longer earns its place should be removed. Delete dead code, expired feature flags, obsolete compatibility paths, unused dependencies, stale documentation, and unsupported behavior. Every retained path remains something future maintainers must understand, test, secure, and update. Compatibility code should not survive simply because it already exists; deliberate deletion is one of the most effective forms of maintenance.
+
 [^1]: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
 [^2]: The *live* environment of an application or service. A production environment is where the final product is delviered to the end user. This could be a website, mobile app, api, etc.
 [^3]: Language version managers use a directory of shims at the front of your `PATH` - Read more about it [here](https://github.com/nodenv/nodenv/blob/8948584145f2ce1853967337c91f2e09996aa1c3/README.md?plain=1#L64-L104).
