@@ -156,7 +156,7 @@ Build systems should follow four rules:
 
 These rules are visible in [`go-template`'s release workflow](https://github.com/GrantBirki/go-template/blob/cdf5f7d3e204cd088d638723c732689aa3c6211c/.github/workflows/release.yml), which uses shared scripts, vendored inputs, checksummed artifacts, provenance, and verification. The [`dns` branch deployment workflow](https://github.com/GrantBirki/dns/blob/b607836ab05879ec3333e24236afb2bca8bd3e69/.github/workflows/branch-deploy.yml) keeps control code trusted, operates on an exact candidate commit, separates `.noop` from `.deploy`, serializes production changes, reports the outcome, and documents rollback. Neither system is magic; their value comes from making the important boundaries explicit and reviewable.
 
-Green tests are necessary, but they are not enough. Tests can show that source code behaves as expected, but they cannot prove that the reviewed source became the packaged artifact or that the exact output reached production. The build system owns that gap and should be operated accordingly.
+A green test suite proves that the tests passed. It does not prove that the reviewed code became the artifact running in production. The build system must close that gap.
 
 ### 6. Testing
 
