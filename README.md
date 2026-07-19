@@ -8,7 +8,7 @@
 
 First, run `script/bootstrap` to verify your local environment.
 
-Now, to run the site locally, simply run:
+Now, to run the site locally, simply run:test
 
 ```bash
 hugo server -D
