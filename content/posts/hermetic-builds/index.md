@@ -215,6 +215,8 @@ Hermetic builds don't prevent security updates – they make them explicit and r
 3. **Document your vendoring process**: Make it easy for new team members to understand how to update dependencies
 4. **Test dependency updates thoroughly**: Since updates are explicit, you can afford to test them more rigorously
 
+> Security tip: if you are going to use dependabot to update your dependencies, you should use the `cooldown` feature to set a *waiting period* before a new dependency can be pull into your project [like this](https://github.com/GrantBirki/ruby-template/blob/55e24c1d5bf9f75843590b02507f47e4b3e84033/.github/dependabot.yml#L20-L21). It will help shield you from supply chain attacks.
+
 ## Hermetic Builds and SLSA Level 3
 
 The [Supply Chain Levels for Software Artifacts (SLSA)](https://slsa.dev/) framework provides a set of security guidelines for securing software supply chains. SLSA Level 3 represents a significant milestone in supply chain security, and hermetic builds are a **critical component** for achieving this level.
