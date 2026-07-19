@@ -103,9 +103,30 @@ For example, a Ruby project should have a `.ruby-version` file at the root with 
 
 Here are some examples of *shim*-based language version managers: [rbenv](https://github.com/rbenv/rbenv), [pyenv](https://github.com/pyenv/pyenv), [goenv](https://github.com/go-nv/goenv), [tfenv](https://github.com/tfutils/tfenv), [nodenv](https://github.com/nodenv/nodenv), [asdf](https://asdf-vm.com/).
 
-### 3. Vendor Dependencies
+### 3. Less is Better
 
-Vendoring dependencies is an often overlooked aspect of software development. Many software languages today have package managers that allow for native dependency vendoring.
+The safest and easiest dependency to maintain is one that a project never adds. Package managers make dependencies feel free, but every one adds code you did not write, maintainers you must trust, releases you must review, and an API your project must carry. A single direct dependency can also hide a much larger transitive graph, multiplying those costs.
+
+I strongly agree with the approach described by Obsidian in their blog post [*Less is safer*](https://obsidian.md/blog/less-is-safer/). Their strategy is wonderfully simple: avoid depending on third-party code in the first place. A shallow dependency graph means fewer paths for a malicious update, fewer upstream decisions affecting your project, and less code to audit. It also improves reliability and maintainability: a dependency that does not exist cannot disappear from a registry, abandon an API, introduce a vulnerability, or demand an emergency upgrade.
+
+This principle applies to **all** dependencies, not only those shipped with the final application. Build tools, linters, development tools, and testing frameworks still execute on developer machines or in CI/CD environments, where they may access source code, credentials, or release artifacts. Calling something a "development dependency" describes when it is used; it does not erase its supply chain risk or maintenance cost.
+
+Programming languages with excellent standard libraries deserve a special shout out because they make this principle practical. Go is an *exceptional* example. Its [`net/http`](https://pkg.go.dev/net/http) package can power a complete web service without a third-party framework, while [`testing`](https://pkg.go.dev/testing) provides tests, benchmarks, and examples without a separate testing framework. A strong standard library supports substantial features while keeping the dependency graph small, understandable, and well maintained.
+
+Before adding a dependency, use this decision ladder:
+
+1. **Start with the standard library**: Use the built-in capability when it fits; it usually has fewer trust, compatibility, and update boundaries.
+2. **Own small and understandable behavior**: A few clear lines of local code are often easier to maintain than a package and its transitive dependencies.
+3. **Internally fork medium sized modules carefully**: Bring code into the project only when its license permits it and the team will own its maintenance. This exchanges upstream trust for direct responsibility; it does not eliminate work.
+4. **Make large dependencies earn their place**: Accept complex or specialized dependencies when recreating them would be riskier. Inspect their maintainers, release history, license, install behavior, and full transitive graph. Their value must outweigh the code and trust they add.
+
+Less is better is a strong default, not an argument for rewriting everything. Homegrown cryptography or casually replacing a mature security-critical parser is likely to create more risk than a carefully selected dependency. Require justification proportional to the dependency's cost, while avoiding the reflex to outsource simple, well-understood behavior.
+
+Revisit this decision during every upgrade. The original need may be gone, while a routine version bump may add sub-dependencies, install scripts, or maintainers. Treat meaningful upgrades as accepting the dependency again. If it still earns its place, pin it, vendor it, and update it deliberately.
+
+### 4. Vendor Dependencies
+
+Once a dependency has earned its place in a project, it should be vendored wherever the language supports it. Vendoring dependencies is an often overlooked aspect of software development. Many software languages today have package managers that allow for native dependency vendoring.
 
 The term *Dependency Vendoring* refers to the practice of including a copy of a given dependency in your project's repository. Ruby is truly a shining example of this by being able to configure `bundler` (the Ruby package manager) to vendor all dependencies locally within a project. Here is an example of vendoring a gem (rack) within a project: [`vendor/cache/rack-3.1.12.gem`](https://github.com/GrantBirki/ruby-template/blob/c3a4f59585545b1e4289fd7045c215e922cf9153/vendor/cache/rack-3.1.12.gem). When a developer goes to configure their environment, their package manager will install the dependencies from the vendored directory. Additionally, when a CI/CD pipeline runs, it will also install the dependencies from the vendored directory. This leads to an extremely stable and reproducible [hermetic build process](/posts/hermetic-builds/) that is not dependent on the availability of the dependency registry except for the first time the dependency is vendored or when the dependency is updated.
 
@@ -122,9 +143,9 @@ Without vendoring, it makes it difficult (or in some cases impossible without to
 
 The North Star of this principle would be to pass what I call the "**airplane test**"[^5]. If you were to be on an airplane with no internet connection, you should be able to: bootstrap a project, write some code, run unit tests, and build (or run) the project[^6]. If you can do all of that, then you have passed the airplane test and are correctly vendoring your dependencies.
 
-### 4. Build Systems are Production Systems
+### 5. Build Systems are Production Systems
 
-### 5. Testing
+### 6. Testing
 
 ## Deployment
 
