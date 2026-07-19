@@ -145,6 +145,19 @@ The North Star of this principle would be to pass what I call the "**airplane te
 
 ### 5. Build Systems are Production Systems
 
+The system that decides what reaches production is part of production. A build system is not just a compiler or a `script/build` command. It includes the repository-owned scripts, CI workflows, packaging, release automation, and deployment controls that turn source code into a running change. This system selects the source, dependencies, tools, credentials, configuration, and final artifact. When it fails, releases stop. When it is compromised, it can produce malicious output that every downstream system trusts.
+
+Build systems should follow four rules:
+
+1. **Use one reviewed path**: Developers and CI should call the same repository-owned `script/*` entrypoints. Keeping the real build logic beside the application makes it reviewable and prevents local, CI, and release builds from quietly becoming different systems. This follows the [scripts to rule them all](https://github.com/github/scripts-to-rule-them-all) pattern.
+2. **Make trust explicit**: Pin runtimes, tools, dependencies, and CI Actions to immutable references. Use least-privilege permissions, and do not expose deployment credentials to code from a pull request. See GitHub's [Secure use reference](https://docs.github.com/en/actions/reference/security/secure-use) and if using branch deployments, see the [trusted checkouts docs](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/trusted-checkouts.md).
+3. **Prove the artifact**: Build the exact reviewed commit, verify the package contents and checksums, and exercise it the way a consumer will. [SLSA provenance](https://slsa.dev/spec/v1.2/provenance) records where, when, and how an artifact was produced. A reproducible build allows another party to recreate it *bit-for-bit* from the same inputs.
+4. **Control deployment**: Preview destructive changes, require explicit authorization, serialize shared mutations, deploy the verified artifact or exact commit, report the result, and preserve a rollback path. A deployment must not silently rebuild something different from what passed review. Notably, release builds should not use GitHub Actions caching [due to the risk of cache poisoning](https://adnanthekhan.com/2024/05/06/the-monsters-in-your-build-cache-github-actions-cache-poisoning/#dont-use-actions-caching-in-release-builds).
+
+These rules are visible in [`go-template`'s release workflow](https://github.com/GrantBirki/go-template/blob/cdf5f7d3e204cd088d638723c732689aa3c6211c/.github/workflows/release.yml), which uses shared scripts, vendored inputs, checksummed artifacts, provenance, and verification. The [`dns` branch deployment workflow](https://github.com/GrantBirki/dns/blob/b607836ab05879ec3333e24236afb2bca8bd3e69/.github/workflows/branch-deploy.yml) keeps control code trusted, operates on an exact candidate commit, separates `.noop` from `.deploy`, serializes production changes, reports the outcome, and documents rollback. Neither system is magic; their value comes from making the important boundaries explicit and reviewable.
+
+Green tests are necessary, but they are not enough. Tests can show that source code behaves as expected, but they cannot prove that the reviewed source became the packaged artifact or that the exact output reached production. The build system owns that gap and should be operated accordingly.
+
 ### 6. Testing
 
 ## Deployment
