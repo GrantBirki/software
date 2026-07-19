@@ -103,11 +103,32 @@ For example, a Ruby project should have a `.ruby-version` file at the root with 
 
 Here are some examples of *shim*-based language version managers: [rbenv](https://github.com/rbenv/rbenv), [pyenv](https://github.com/pyenv/pyenv), [goenv](https://github.com/go-nv/goenv), [tfenv](https://github.com/tfutils/tfenv), [nodenv](https://github.com/nodenv/nodenv), [asdf](https://asdf-vm.com/).
 
-### 3. Vendor Dependencies
+### 3. Less is Better
 
-Vendoring dependencies is an often overlooked aspect of software development. Many software languages today have package managers that allow for native dependency vendoring.
+The safest and easiest dependency to maintain is one that a project never adds. Package managers make dependencies feel free, but every one adds code you did not write, maintainers you must trust, releases you must review, and an API your project must carry. A single direct dependency can also hide a much larger transitive graph, multiplying those costs.
 
-The term *Dependency Vendoring* refers to the practice of including a copy of a given dependency in your project's repository. Ruby is truly a shining example of this by being able to configure `bundler` (the Ruby package manager) to vendor all dependencies locally within a project. Here is an example of vendoring a gem (rack) within a project: [`vendor/cache/rack-3.1.12.gem`](https://github.com/GrantBirki/ruby-template/blob/c3a4f59585545b1e4289fd7045c215e922cf9153/vendor/cache/rack-3.1.12.gem). When a developer goes to configure their environment, their package manager will install the dependencies from the vendored directory. Additionally, when a CI/CD pipeline runs, it will also install the dependencies from the vendored directory. This leads to an extremely stable and reproducible build process that is not dependent on the availability of the dependency registry except for the first time the dependency is vendored or when the dependency is updated.
+I strongly agree with the approach described by Obsidian in their blog post [*Less is safer*](https://obsidian.md/blog/less-is-safer/). Their strategy is wonderfully simple: avoid depending on third-party code in the first place. A shallow dependency graph means fewer paths for a malicious update, fewer upstream decisions affecting your project, and less code to audit. It also improves reliability and maintainability: a dependency that does not exist cannot disappear from a registry, abandon an API, introduce a vulnerability, or demand an emergency upgrade.
+
+This principle applies to **all** dependencies, not only those shipped with the final application. Build tools, linters, development tools, and testing frameworks still execute on developer machines or in CI/CD environments, where they may access source code, credentials, or release artifacts. Calling something a "development dependency" describes when it is used; it does not erase its supply chain risk or maintenance cost.
+
+Programming languages with excellent standard libraries deserve a special shout out because they make this principle practical. Go is an *exceptional* example. Its [`net/http`](https://pkg.go.dev/net/http) package can power a complete web service without a third-party framework, while [`testing`](https://pkg.go.dev/testing) provides tests, benchmarks, and examples without a separate testing framework. A strong standard library supports substantial features while keeping the dependency graph small, understandable, and well maintained.
+
+Before adding a dependency, use this decision ladder:
+
+1. **Start with the standard library**: Use the built-in capability when it fits; it usually has fewer trust, compatibility, and update boundaries.
+2. **Own small and understandable behavior**: A few clear lines of local code are often easier to maintain than a package and its transitive dependencies.
+3. **Internally fork medium sized modules carefully**: Bring code into the project only when its license permits it and the team will own its maintenance. This exchanges upstream trust for direct responsibility; it does not eliminate work.
+4. **Make large dependencies earn their place**: Accept complex or specialized dependencies when recreating them would be riskier. Inspect their maintainers, release history, license, install behavior, and full transitive graph. Their value must outweigh the code and trust they add.
+
+Less is better is a strong default, not an argument for rewriting everything. Homegrown cryptography or casually replacing a mature security-critical parser is likely to create more risk than a carefully selected dependency. Require justification proportional to the dependency's cost, while avoiding the reflex to outsource simple, well-understood behavior.
+
+Revisit this decision during every upgrade. The original need may be gone, while a routine version bump may add sub-dependencies, install scripts, or maintainers. Treat meaningful upgrades as accepting the dependency again. If it still earns its place, pin it, vendor it, and update it deliberately.
+
+### 4. Vendor Dependencies
+
+Once a dependency has earned its place in a project, it should be vendored wherever the language supports it. Vendoring dependencies is an often overlooked aspect of software development. Many software languages today have package managers that allow for native dependency vendoring.
+
+The term *Dependency Vendoring* refers to the practice of including a copy of a given dependency in your project's repository. Ruby is truly a shining example of this by being able to configure `bundler` (the Ruby package manager) to vendor all dependencies locally within a project. Here is an example of vendoring a gem (rack) within a project: [`vendor/cache/rack-3.1.12.gem`](https://github.com/GrantBirki/ruby-template/blob/c3a4f59585545b1e4289fd7045c215e922cf9153/vendor/cache/rack-3.1.12.gem). When a developer goes to configure their environment, their package manager will install the dependencies from the vendored directory. Additionally, when a CI/CD pipeline runs, it will also install the dependencies from the vendored directory. This leads to an extremely stable and reproducible [hermetic build process](/posts/hermetic-builds/) that is not dependent on the availability of the dependency registry except for the first time the dependency is vendored or when the dependency is updated.
 
 The reason that Ruby is such a great example here is due to the way that Gems are structured as a single file. This makes it easy to vendor the dependency and commit it to the repository. Updating a Ruby Gem that has been vendored typically involves updating a single file (the Gem). Doing the same in GoLang might result in updating a directory of files (could be thousands of files).
 
@@ -122,13 +143,98 @@ Without vendoring, it makes it difficult (or in some cases impossible without to
 
 The North Star of this principle would be to pass what I call the "**airplane test**"[^5]. If you were to be on an airplane with no internet connection, you should be able to: bootstrap a project, write some code, run unit tests, and build (or run) the project[^6]. If you can do all of that, then you have passed the airplane test and are correctly vendoring your dependencies.
 
-### 4. Build Systems are Production Systems
+### 5. Build Systems are Production Systems
 
-### 5. Testing
+The system that decides what reaches production is part of production. A build system is not just a compiler or a `script/build` command. It includes the repository-owned scripts, CI workflows, packaging, release automation, and deployment controls that turn source code into a running change. This system selects the source, dependencies, tools, credentials, configuration, and final artifact. When it fails, releases stop. When it is compromised, it can produce malicious output that every downstream system trusts.
+
+Build systems should follow four rules:
+
+1. **Use one reviewed path**: Developers and CI should call the same repository-owned `script/*` entrypoints. Keeping the real build logic beside the application makes it reviewable and prevents local, CI, and release builds from quietly becoming different systems. This follows the [scripts to rule them all](https://github.com/github/scripts-to-rule-them-all) pattern.
+2. **Make trust explicit**: Pin runtimes, tools, dependencies, and CI Actions to immutable references. Use least-privilege permissions, and do not expose deployment credentials to code from a pull request. See GitHub's [Secure use reference](https://docs.github.com/en/actions/reference/security/secure-use) and if using branch deployments, see the [trusted checkouts docs](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/trusted-checkouts.md).
+3. **Prove the artifact**: Build the exact reviewed commit, verify the package contents and checksums, and exercise it the way a consumer will. [SLSA provenance](https://slsa.dev/spec/v1.2/provenance) records where, when, and how an artifact was produced. A reproducible build allows another party to recreate it *bit-for-bit* from the same inputs.
+4. **Control deployment**: Preview destructive changes, require explicit authorization, serialize shared mutations, deploy the verified artifact or exact commit, report the result, and preserve a rollback path. A deployment must not silently rebuild something different from what passed review. Notably, release builds should not use GitHub Actions caching [due to the risk of cache poisoning](https://adnanthekhan.com/2024/05/06/the-monsters-in-your-build-cache-github-actions-cache-poisoning/#dont-use-actions-caching-in-release-builds).
+
+These rules are visible in [`go-template`'s release workflow](https://github.com/GrantBirki/go-template/blob/cdf5f7d3e204cd088d638723c732689aa3c6211c/.github/workflows/release.yml), which uses shared scripts, vendored inputs, checksummed artifacts, provenance, and verification. The [`dns` branch deployment workflow](https://github.com/GrantBirki/dns/blob/b607836ab05879ec3333e24236afb2bca8bd3e69/.github/workflows/branch-deploy.yml) keeps control code trusted, operates on an exact candidate commit, separates `.noop` from `.deploy`, serializes production changes, reports the outcome, and documents rollback. Neither system is magic; their value comes from making the important boundaries explicit and reviewable.
+
+A green test suite proves that the tests passed. It does not prove that the reviewed code became the artifact running in production. The build system must close that gap.
+
+### 6. Testing
+
+An exceptional test suite should aim for 100% line, branch, and function coverage. This is the North Star. It forces a project to account for every path through its code instead of quietly accepting unknown behavior.
+
+Coverage does not prove correctness; it only proves that code executed. Tests still need meaningful assertions across successful paths, failures, edge cases, and the branches where safety decisions are made. Every behavior change should include tests, and every bug fix should add a regression test that fails without the fix.
+
+Strong tests are the lifeblood of a healthy open source project (and private projects too). They give maintainers a reliable way to evaluate a contribution without reconstructing the entire system during review. They also give contributors the confidence to make a change and know whether it broke unrelated behavior. Without that shared safety net, contributions become slower, riskier, and less likely.
+
+Every project should expose one consistent test command. `script/test` should be the entrypoint that developers and CI both call. Unit tests should be fast, focused, deterministic, and isolated from the network. A suite that is slow or unreliable teaches people not to run it.
+
+Languages with excellent built-in testing tools make this much easier. Go's `testing` package is an excellent example: a project can write tests, benchmarks, and executable examples without adding another testing dependency.
+
+Acceptance tests are the next level. Projects with an executable, service, or other consumer-facing boundary should exercise the product through the same interface a consumer uses. Run these tests through `script/acceptance`, both locally and in CI. Keep the environment controlled with mock APIs, emulators, or disposable containerized services instead of live external systems. A GitHub integration can use a mock GitHub API, an LDAP-backed service can use a disposable LDAP container, and an Action can be invoked through `uses: ./`. These tests prove that the parts work together while remaining repeatable and independent of someone else's availability or data.
 
 ## Deployment
 
+### 1. Deploy Before Merge
+
+The safest time to discover that a change does not work in production is before it becomes part of `main`. Merge-then-deploy reverses this order: it records a change as accepted and only then discovers whether it can run. That makes every deployment a gamble and turns `main` into a collection of assumptions instead of a known-good branch.
+
+Branch deployment should be the strong default. Open a pull request, pass the selected CI checks, explicitly authorize a production deployment, validate the running change, and merge only after it works. The order matters. Testing and review establish that the change should work; the deployment proves that it does work in the environment that matters. The merge then records a state that has already been proven.
+
+This model also gives `main` a useful and durable meaning: it is the known-good, deployable branch. A broken candidate can be fixed or abandoned without first removing it from `main`, and a rollback has an obvious target. The [Branch Deploy Model](https://blog.birki.io/posts/branch-deploy/) describes this workflow in more detail, while GitHub's article on [enabling branch deployments through IssueOps](https://github.blog/engineering/engineering-principles/enabling-branch-deployments-through-issueops-with-github-actions/) shows how the same idea can work across a large engineering organization.
+
+Merging should not automatically trigger a redundant deployment when production already contains the exact tree that was validated. If the merge result matches the deployed change, there is nothing new to prove. Reconcile from `main` only when the merge commit, an intervening deployment, or another repository change means that production differs from the newly merged tree. The upstream [merge-commit strategy](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/merge-commit-strategy.md) provides a practical model for making that decision without discarding the safety of deploy-before-merge.
+
+### 2. Deploy Immutable References
+
+People deploy pull request branches; machines should deploy exact commits. A branch gives humans the context they need: the review, discussion, CI results, permissions, and deployment history. The actual deployment target must be the full commit SHA selected from that pull request. This separates a useful human workflow from the immutable identity required by a reliable system.
+
+Every deployment should retain that source SHA. When the build produces a container, package, binary, or other artifact, the deployment should also use and retain its immutable digest or checksum. Branches, tags, versions, and releases are valuable labels, but they are not sufficient identities. They can move, be recreated, or resolve differently over time. An exact SHA and artifact digest make it possible to answer a basic question long after the event: what, precisely, is running?
+
+This is not an argument for allowing arbitrary commit SHAs to bypass the normal workflow. The SHA should still be selected through a pull request, checked by CI, constrained by permissions, and deployed only after explicit authorization. The [commit-SHA deployment guidance](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/deploying-commit-SHAs.md) preserves the pull request as the trusted context while ensuring that the selected candidate cannot change between approval and deployment.
+
+Deployment control code needs its own trust boundary. Workflows, scripts, and helpers that decide how production changes should come from a trusted revision of the default branch. Only the candidate application or infrastructure should come from the pull request's exact SHA. Otherwise, a pull request can change both the thing being deployed and the mechanism that grants credentials and deploys it. The pinned [trusted-checkout guidance](https://github.com/github/branch-deploy/blob/de4d10ee17c3117a2076aff489ba03fadf225f35/docs/trusted-checkouts.md) demonstrates how to keep those responsibilities separate.
+
+### 3. Make Deployments Safe and Reversible
+
+A production deployment should require two things: the selected CI checks must pass, and an authorized operator must explicitly request the change. Passing tests alone should not silently mutate production, and deployment authority should not bypass the project's required checks. Pull request approval requirements can remain project-specific; different teams and risk levels justify different review policies.
+
+When a deployment system can produce a meaningful noop, plan, preview, or dry run, show it before applying the change. This is especially valuable for infrastructure and other destructive operations because it gives the operator a chance to catch an unexpected mutation. It is not a universal requirement. A misleading preview or one that merely repeats the input adds ceremony without adding safety.
+
+Deployments that compete for the same environment or shared mutable state must be serialized. Two individually safe changes can become unsafe when they race, overwrite each other, or apply from different assumptions about the current state. Independent and additive releases do not need a global lock simply for consistency's sake. Concurrency should follow the actual collision boundary.
+
+The result of every deployment should remain visible and attributable. A maintainer should be able to find the exact source and artifact identity, the target environment, whether the deployment succeeded, and the output needed to understand the result. The specific metadata format matters less than keeping a durable connection between the reviewed change and the production event.
+
+Rollback must be a normal and practiced deployment operation. When a candidate fails, redeploy the stable state of `main`, resolved to its exact source SHA and artifact identity. Do not wait for a revert pull request to merge before restoring service. The repository can record the corrective change afterward; production recovery should use the known-good state that already exists.
+
+These principles do not require any particular command interface or CI provider. They require a deployment system that preserves context, deploys immutable inputs, protects its control path, proves changes in production, and can recover quickly. [`github/branch-deploy`](https://github.com/github/branch-deploy) is one reference implementation of this model.
+
 ## Maintenance
+
+A maintainable project makes ownership, runtime behavior, and future change easy to understand. Maintenance is the steady work of preserving those properties from the very start and long after release with ease.
+
+### 1. Make Ownership Durable
+
+Every repository should have a discoverable purpose and owner. Prefer ownership by a team because teams survive role changes and departures in a way that ownership by one person cannot. The repository should explain why that team owns it, while a mechanism such as [`CODEOWNERS`](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners) makes the mapping visible. Ownership means responsibility for reviews, releases, dependency and security updates, and compatibility decisions.
+
+### 2. Logs Must Explain What Happened
+
+Services and applications should log enough information to explain what they did and why they failed. Record meaningful operations, state changes, outcomes, and errors with the context needed to investigate them. Use clear severity levels and request or operation identifiers when they help connect events. The format matters less than usefulness, but logs must never expose secrets or sensitive data. After an incident, improve the logs, tests, or error handling that made the failure difficult to understand.
+
+### 3. Maintain Continuously
+
+Immutable pins make updates explicit; they do not make updates optional. Prefer small, regular, reviewed updates over large upgrade projects where years of drift must be understood at once.
+
+### 4. Keep `main` Green
+
+`main` is the baseline used to judge every future change. Broken CI, flaky tests, ignored warnings, and broken maintenance workflows are defects because they make that baseline unreliable. Fix them quickly or remove checks that no longer provide a useful signal. A project that normalizes red builds eventually loses the ability to tell whether a new change is safe.
+
+### 5. Prefer the Simplest Complete Fix
+
+Follow the KISS principle during bug fixes and ongoing maintenance. The best change usually fixes the root cause, adds regression coverage, and stops. Avoid unrelated refactoring, speculative abstractions, and clever solutions that expand the system without improving the fix. Simple means leaving behind the smallest understandable design that completely solves the problem, not merely producing the smallest diff.
+
+### 6. Delete What You No Longer Need
+
+Code that no longer earns its place should be removed. Delete dead code, expired feature flags, obsolete compatibility paths, unused dependencies, stale documentation, and unsupported behavior. Every retained path remains something future maintainers must understand, test, secure, and update. Compatibility code should not survive simply because it already exists; deliberate deletion is one of the most effective forms of maintenance.
 
 [^1]: A software project that could be a library, service, or application. This term will be interchanged with "repository" often in this document.
 [^2]: The *live* environment of an application or service. A production environment is where the final product is delviered to the end user. This could be a website, mobile app, api, etc.
