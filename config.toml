@@ -11,6 +11,7 @@ title = "software"
   author = "Grant Birkinbine"
   description = "Software Project Design and Deployment"
   footer = "birki.io"
+  showPostsLink = true
 
   [params.copyMarkdown]
     enabled = true
