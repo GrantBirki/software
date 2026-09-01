@@ -18,9 +18,9 @@ jobs:
       - uses: openai/fence@db291f5c51949e6e6ec1634621b36dc4bbf3d54a # pin@v0.8.7
 
       # Comment on new PR requests with deployment instructions
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # pin@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # pin@v6
       - name: comment
-        uses: GrantBirki/comment@3439715f0cf3b8fc29bf47be0e3226679c06c41a # pin@v3.0.0
+        uses: GrantBirki/comment@937820f3623fd0e300294bcc64ac7577fc0ad4cc # pin@v3.0.3
         continue-on-error: true
         with:
           file: .github/new-pr-comment.md
