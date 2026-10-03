@@ -12,6 +12,8 @@ permissions: {}
 env:
   web_url: https://software.birki.io
 
+cache-mode: none
+
 jobs:
   # branch-deploy trigger job
   trigger:
